@@ -396,9 +396,7 @@ class DropsCampaign:
 
     @property
     def eligible(self) -> bool:
-        return self.linked or (
-            self._twitch.settings.enable_badges_emotes and self.has_badge_or_emote
-        )
+        return self.linked or self.has_badge_or_emote or self.ignore_linked_status
 
     @cached_property
     def has_badge_or_emote(self) -> bool:
