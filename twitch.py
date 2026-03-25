@@ -1206,7 +1206,11 @@ class Twitch:
     async def process_notifications(self, user_id: int, message: JsonType):
         if message["type"] == "create-notification":
             data: JsonType = message["data"]["notification"]
-            if data["type"] == "user_drop_reward_reminder_notification":
+            if data["type"] in (
+                "user_drop_reward_reminder_notification",  # drop confirmation
+                "quests_viewer_reward_campaign_earned_emote",  # emote confirmation
+                # badge confirmation?
+            ):
                 self.change_state(State.INVENTORY_FETCH)
                 await self.gql_request(
                     GQL_OPERATIONS["NotificationsDelete"].with_variables(
@@ -1307,8 +1311,8 @@ class Twitch:
                             if (
                                 single_retry
                                 and error_dict["message"] in (
-                                    "service error"
-                                    "PersistedQueryNotFound"
+                                    "service error",
+                                    "PersistedQueryNotFound",
                                 )
                             ):
                                 logger.error(
